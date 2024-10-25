@@ -1,0 +1,90 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Ma page web</title>
+
+    <!-- Lien vers le CSS pour Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
+    
+    <!-- Script pour charger Leaflet et jQuery -->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script> 
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    <style>
+      /* Style pour la carte */
+      #mapid {
+        height: 80vh;
+        width: 80%;
+      }
+      .center-button {
+        display: flex;
+        justify-content: center;
+        margin: 10px;
+      }
+    </style>
+</head>
+  
+<body>
+    <!-- Conteneur de la carte -->
+
+center><button id="boutongares">Afficher ou cacher les gares</button></center> <br>
+<center><button id="boutonortho">Afficher ou cacher l'orthophoto</button></center> 
+
+    <div id="mapid"></div> 
+
+    
+    
+
+    
+      
+    <!-- Script pour configurer la carte et ajouter des marqueurs -->
+    <script>
+      // Initialiser la carte
+      var mymap = L.map('mapid').setView([48.5695, 7.5702], 10);
+
+      // Ajouter une couche de tuiles OSM
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
+
+      // Définir les marqueurs pour chaque gare
+      var garestrasbourg = L.marker([48.5851, 7.7342]).bindPopup('Gare SNCF de Strasbourg');
+      var garesaverne = L.marker([48.7448, 7.3621]).bindPopup('Gare SNCF de Saverne');
+      var gareselestat = L.marker([48.2600, 7.4428]).bindPopup('Gare SNCF de Sélestat');
+      var garebenfeld = L.marker([48.3737, 7.5838]).bindPopup('Gare SNCF de Benfeld');
+      var gareerstein = L.marker([48.4227, 7.6381]).bindPopup('Gare SNCF de Erstein');
+
+      // Grouper les marqueurs dans une couche
+      var gares = L.layerGroup([garestrasbourg, garesaverne, gareselestat, garebenfeld, gareerstein]);
+
+      // Ajouter les couches WMS pour les orthophotos
+      var ortho2022 = L.tileLayer.wms('https://www.datagrandest.fr/geoserver/ems/ows', {
+        layers: 'EMS_Ortho_2022',
+        format: 'image/png',
+        transparent: true
+      });
+
+      var orthoVisible = false; // état de visibilité de l'orthophoto
+
+      // Gérer l'affichage des gares avec le bouton
+      $("#boutongares").click(function(event) {
+        event.preventDefault();
+        if (mymap.hasLayer(gares)) {
+          mymap.removeLayer(gares);
+        } else {
+          mymap.addLayer(gares);
+        }
+      });
+
+      // Gérer l'affichage de l'orthophoto avec le bouton
+      $("#boutonortho").click(function(event) {
+        event.preventDefault();
+        if (orthoVisible) {
+          mymap.removeLayer(ortho2022);
+          orthoVisible = false;
+        } else {
+          mymap.addLayer(ortho2022);
+          orthoVisible = true;
+        }
+      });
+    </script>
+</body>
+</html>
